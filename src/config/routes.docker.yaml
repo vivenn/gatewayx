@@ -1,0 +1,17 @@
+# Same route table as routes.yaml, but pointing at docker-compose service
+# names instead of localhost — mounted via ROUTES_CONFIG_PATH in
+# docker-compose.yml so the same code works in both environments without a
+# branch in application logic.
+routes:
+  - prefix: /api/auth
+    upstream: http://auth-service:3001
+    auth: none
+  - prefix: /api/users
+    upstream: http://user-service:3002
+    auth: jwt
+  - prefix: /api/orders
+    upstream: http://order-service:3003
+    auth: jwt
+  - prefix: /api/notifications
+    upstream: http://notification-service:3004
+    auth: jwt

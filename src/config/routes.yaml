@@ -1,0 +1,17 @@
+# Static route table for GatewayX. Each entry proxies everything under
+# `prefix` to `upstream`. `auth: jwt` means the JWT plugin must verify a
+# valid token before the request is proxied; `auth: none` passes through
+# untouched (e.g. the auth service's own login/register endpoints).
+routes:
+  - prefix: /api/auth
+    upstream: http://localhost:3001
+    auth: none
+  - prefix: /api/users
+    upstream: http://localhost:3002
+    auth: jwt
+  - prefix: /api/orders
+    upstream: http://localhost:3003
+    auth: jwt
+  - prefix: /api/notifications
+    upstream: http://localhost:3004
+    auth: jwt
