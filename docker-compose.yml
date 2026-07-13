@@ -1,0 +1,94 @@
+# Full local stack: gateway + Redis + Postgres + four mock backend services.
+# `docker compose up --build` reads JWT_PUBLIC_KEY etc. from a .env file in
+# this directory (copy .env.example -> .env and run `npm run keys:generate`
+# first). Mock services share the same built image as the gateway — only
+# the command and PORT/SERVICE_NAME env vars differ.
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gatewayx
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  auth-service:
+    build: .
+    command: ['node', 'dist/mock-services/service.js']
+    environment:
+      PORT: 3001
+      SERVICE_NAME: auth-service
+    ports:
+      - '3001:3001'
+
+  user-service:
+    build: .
+    command: ['node', 'dist/mock-services/service.js']
+    environment:
+      PORT: 3002
+      SERVICE_NAME: user-service
+    ports:
+      - '3002:3002'
+
+  order-service:
+    build: .
+    command: ['node', 'dist/mock-services/service.js']
+    environment:
+      PORT: 3003
+      SERVICE_NAME: order-service
+    ports:
+      - '3003:3003'
+
+  notification-service:
+    build: .
+    command: ['node', 'dist/mock-services/service.js']
+    environment:
+      PORT: 3004
+      SERVICE_NAME: notification-service
+    ports:
+      - '3004:3004'
+
+  gateway:
+    build: .
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+      order-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      LOG_LEVEL: info
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+      JWT_ISSUER: gatewayx-auth
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/gatewayx
+      ROUTES_CONFIG_PATH: dist/config/routes.docker.yaml
+      API_KEY_PEPPER: ${API_KEY_PEPPER:-change-me-in-production}
+      CORS_ORIGINS: http://localhost:8080
+    ports:
+      - '8080:8080'
