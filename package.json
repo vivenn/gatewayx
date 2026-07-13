@@ -1,0 +1,77 @@
+{
+  "name": "gatewayx",
+  "version": "0.1.0",
+  "description": "Production-grade API Gateway built on Fastify + TypeScript",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/src/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "mock:auth": "cross-env PORT=3001 SERVICE_NAME=auth-service tsx mock-services/service.ts",
+    "mock:user": "cross-env PORT=3002 SERVICE_NAME=user-service tsx mock-services/service.ts",
+    "mock:order": "cross-env PORT=3003 SERVICE_NAME=order-service tsx mock-services/service.ts",
+    "mock:notification": "cross-env PORT=3004 SERVICE_NAME=notification-service tsx mock-services/service.ts",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down",
+    "keys:generate": "tsx scripts/generate-jwt-keys.ts",
+    "token:generate": "tsx scripts/sign-test-token.ts",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@fastify/compress": "^8.0.1",
+    "@fastify/cors": "^10.0.1",
+    "@fastify/helmet": "^12.0.1",
+    "@fastify/http-proxy": "^11.5.0",
+    "awilix": "^12.0.1",
+    "dotenv": "^16.4.5",
+    "fast-jwt": "^6.2.4",
+    "fastify": "^5.1.0",
+    "fastify-plugin": "^5.0.1",
+    "fastify-type-provider-zod": "^4.0.2",
+    "ioredis": "^5.4.1",
+    "pg": "^8.13.1",
+    "pino": "^9.5.0",
+    "yaml": "^2.6.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@eslint/js": "^9.16.0",
+    "@types/node": "^22.10.1",
+    "@types/pg": "^8.11.10",
+    "@vitest/coverage-v8": "^3.2.7",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.16.0",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
+    "pino-pretty": "^13.0.0",
+    "prettier": "^3.4.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.17.0",
+    "vitest": "^3.2.7"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,yaml,yml,md}": [
+      "prettier --write"
+    ]
+  }
+}
