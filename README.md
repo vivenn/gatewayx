@@ -183,3 +183,7 @@ npx autocannon -c 40 -d 15 http://localhost:3001/api/auth/health   # baseline
 - **Not yet enforced:** rate limiting, RBAC, request body/timeout limits —
   all Tier 2, still stubbed. This is an authenticated proxy today, not yet
   a hardened one.
+
+## License
+
+[MIT](LICENSE) © 2026 Vinod Suthar

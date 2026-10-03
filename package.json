@@ -4,6 +4,7 @@
   "description": "Production-grade API Gateway built on Fastify + TypeScript",
   "type": "module",
   "private": true,
+  "license": "MIT",
   "engines": {
     "node": ">=20"
   },
